@@ -751,7 +751,7 @@ def index():
     # filter_column_colors=False)
     
     
-    video_url_inflation= '/static/inflation.mp4'
+    video_url_inflation= '/static/inflation_final.mp4'
     
         
     
