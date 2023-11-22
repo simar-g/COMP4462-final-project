@@ -18,6 +18,7 @@
                 explicabo natus consectetur veritatis atque, dolorum sed esse omnis adipisci iusto exercitationem? Molestiae 
                 deserunt excepturi amet optio officia sit omnis maxime, eos quam natus voluptatum reprehenderit dolor quasi at 
                 repellendus quas. Odio nesciunt nostrum totam enim fugiat, et reiciendis at?
+                
             </p>
         
        </div>
@@ -29,7 +30,7 @@
 <div class="row p-4">
     <div class="card m-auto" style="width: 80%;" data-aos="slide-left" >
        <div class="card-body" >
-        <div id="video-container" style="display: flex; justify-content: center; align-items: center;">
+        <div id="video-container-violin" style="display: flex; justify-content: center; align-items: center;">
                          
         </div>
         
@@ -40,16 +41,57 @@
 
 </div>
 
+
+<div class="row p-4">
+    <div class="card m-auto" style="width: 80%;" data-aos="slide-left" >
+       <div class="card-body" >
+        <div id="video_url_correlation" style="display: flex; justify-content: center; align-items: center;">
+                         
+        </div>
+        
+        
+        
+       </div>
+    </div>
+
+</div>
+
+<div class="row p-4">
+    <div class="card m-auto" style="width: 80%;" data-aos="slide-left" >
+       <div class="card-body" >
+        <div id="video_url_inflation" style="display: flex; justify-content: center; align-items: center;">
+                         
+        </div>
+        
+        
+        
+       </div>
+    </div>
+
+</div>
     
+
+
 
 
 
 <div class="card mb-4 m-auto" style="width: 100%;" data-aos="fade-left">
     <div class="card-body">
-        <div id="chart2"></div>
+        <div id="dash-1"></div>
         
     </div>
 </div>
+
+
+<div class="card mb-4 m-auto" style="width: 100%;" data-aos="fade-left">
+    <div class="card-body">
+        <div id="dash-2"></div>
+        
+    </div>
+</div>
+
+
+
 
    <!-- plotly CDN -->
 
@@ -59,16 +101,13 @@
 
        var graph1 = {{ graph1JSON | safe}};
        Plotly.plot("chart1", graph1,{});
-
-    
-
-
-   </script>
+       
+    </script>
 
    
 
     <script>
-        var videoUrl = "{{ video_url}}";
+        var videoUrl = "{{ video_url_violin}}";
         var videoElement = document.createElement("video");
         videoElement.width = 700;
         videoElement.height = 400;
@@ -81,8 +120,73 @@
         videoElement.appendChild(sourceElement);
 
 
-        var videoContainer = document.getElementById("video-container");
+        var videoContainer = document.getElementById("video-container-violin");
         videoContainer.appendChild(videoElement);
     </script>
 
+
+    <script>
+        var videoUrl = "{{ video_url_correlation}}";
+        var videoElement = document.createElement("video");
+        videoElement.width = 700;
+        videoElement.height = 400;
+        videoElement.autoplay = true;
+        var sourceElement = document.createElement("source");
+        sourceElement.src = videoUrl;
+        videoElement.controls = true;
+        videoElement.muted = false; // Set muted to false
+        sourceElement.type = "video/mp4";
+        videoElement.appendChild(sourceElement);
+
+
+        var videoContainer = document.getElementById("video_url_correlation");
+        videoContainer.appendChild(videoElement);
+    </script>
+
+
+    <script>
+        var videoUrl = "{{ video_url_infaltion}}";
+        var videoElement = document.createElement("video");
+        videoElement.width = 700;
+        videoElement.height = 400;
+        videoElement.autoplay = true;
+        var sourceElement = document.createElement("source");
+        sourceElement.src = videoUrl;
+        videoElement.controls = true;
+        videoElement.muted = false; // Set muted to false
+        sourceElement.type = "video/mp4";
+        videoElement.appendChild(sourceElement);
+
+
+        var videoContainer = document.getElementById("video_url_inflation");
+        videoContainer.appendChild(videoElement);
+    </script>
+
+
+    <script src="{{ url_for('static', filename='dash-renderer.js') }}"></script>
+    <script>
+        // Initialize Dash App 1
+        var dash1 = new Dash({
+            urlBasePathname: '/dash1/',
+            renderer: new DashRenderer(),
+            setProps: function (props) {
+                document.getElementById('dash1').props = props;
+            }
+        });
+        dash1.start();
+
+        // Initialize Dash App 2
+        var dash2 = new Dash({
+            urlBasePathname: '/dash2/',
+            renderer: new DashRenderer(),
+            setProps: function (props) {
+                document.getElementById('dash2').props = props;
+            }
+        });
+        dash2.start();
+    </script>
+
+ 
 {% endblock%}
+
+
