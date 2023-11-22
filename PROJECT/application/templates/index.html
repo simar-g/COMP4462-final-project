@@ -1,9 +1,23 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="site-header-logo">
-    <h1 class="text-center">
+<div class="site-header-logo" >
+    <h1 class="text-center" >
         COMP4462_final_project
     </h1>
+
+</div>
+
+<div class="row p-4">
+    <div class="card m-auto" style="width: 90%; height:50%; " data-aos="slide-left",>
+       <div class="card-body" >
+        <div id="video_url_correlation" style="display: flex; justify-content: center; align-items: center;">
+                         
+        </div>
+        
+        
+        
+       </div>
+    </div>
 
 </div>
 
@@ -11,14 +25,22 @@
     <div class="card m-auto" style="width: 90%;" data-aos="flip-left" >
        <div class="card-body" >
         <div id="chart1"></div>
-            <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia ea, earum similique doloribus 
-                illum quis voluptas illo exercitationem qui voluptate obcaecati repudiandae, ad perferendis sequi amet 
-                doloremque. Labore, magni excepturi minima cum sit magnam maiores mollitia officiis ut aperiam, doloribus 
-                explicabo natus consectetur veritatis atque, dolorum sed esse omnis adipisci iusto exercitationem? Molestiae 
-                deserunt excepturi amet optio officia sit omnis maxime, eos quam natus voluptatum reprehenderit dolor quasi at 
-                repellendus quas. Odio nesciunt nostrum totam enim fugiat, et reiciendis at?
-            </p>
+         
+        
+       </div>
+    </div>
+
+</div>
+
+
+<div class="row p-4">
+    <div class="card m-auto" style="width: 90%; height:30%;" data-aos="slide-left" >
+       <div class="card-body" >
+        <div id="video-container-violin" style="display: flex; justify-content: center; align-items: center;">
+                         
+        </div>
+        
+        
         
        </div>
     </div>
@@ -27,12 +49,30 @@
 
 
 
-<div class="card mb-4 m-auto" style="width: 100%;" data-aos="fade-left">
-    <div class="card-body">
-        <div id="chart2"></div>
+
+<div class="row p-4">
+    <div class="card m-auto" style="width: 90%; height:40%;" data-aos="slide-left" >
+       <div class="card-body" >
+        <div id="video_url_inflation" style="display: flex; justify-content: center; align-items: center;">
+                         
+        </div>
         
+        
+        
+       </div>
     </div>
+
 </div>
+    
+
+
+
+
+
+
+
+
+
 
    <!-- plotly CDN -->
 
@@ -42,10 +82,73 @@
 
        var graph1 = {{ graph1JSON | safe}};
        Plotly.plot("chart1", graph1,{});
+       
+    </script>
+
+   
+
+    <script>
+        var videoUrl = "{{ video_url_violin}}";
+        var videoElement = document.createElement("video");
+        videoElement.width = 700;
+        videoElement.height = 400;
+        videoElement.autoplay = true;
+        var sourceElement = document.createElement("source");
+        sourceElement.src = videoUrl;
+        videoElement.controls = false;
+        videoElement.muted = false; // Set muted to false
+        sourceElement.type = "video/mp4";
+        videoElement.appendChild(sourceElement);
+
+
+        var videoContainer = document.getElementById("video-container-violin");
+        videoContainer.appendChild(videoElement);
+
+        
+    </script>
+
+
+    <script>
+        var videoUrl = "{{ video_url_correlation}}";
+        var videoElement = document.createElement("video");
+        videoElement.width = 700;
+        videoElement.height = 400;
+        videoElement.autoplay = true;
+        var sourceElement = document.createElement("source");
+        sourceElement.src = videoUrl;
+        videoElement.controls = false;
+        videoElement.muted = false; // Set muted to false
+        sourceElement.type = "video/mp4";
+        videoElement.appendChild(sourceElement);
+
+
+        var videoContainer = document.getElementById("video_url_correlation");
+        videoContainer.appendChild(videoElement);
+    </script>
+
+
+    <script>
+        var videoUrl = "{{ video_url_inflation}}";
+        var videoElement = document.createElement("video");
+        videoElement.width = 700;
+        videoElement.height = 400;
+        videoElement.autoplay = true;
+        var sourceElement = document.createElement("source");
+        sourceElement.src = videoUrl;
+        videoElement.controls = false;
+        videoElement.muted = false; // Set muted to false
+        sourceElement.type = "video/mp4";
+        videoElement.appendChild(sourceElement);
+
+
+        var videoContainer = document.getElementById("video_url_inflation");
+        videoContainer.appendChild(videoElement);
+    </script>
+
 
     
 
-
-   </script>
-
+ 
 {% endblock%}
+
+
