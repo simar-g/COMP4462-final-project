@@ -1,49 +1,14 @@
 {% extends "layout.html" %}
 {% block content %}
-<div class="site-header-logo">
-    <h1 class="text-center">
+<div class="site-header-logo" >
+    <h1 class="text-center" >
         COMP4462_final_project
     </h1>
 
 </div>
 
 <div class="row p-4">
-    <div class="card m-auto" style="width: 80%;" data-aos="flip-left" >
-       <div class="card-body" >
-        <div id="chart1"></div>
-            <p>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Officia ea, earum similique doloribus 
-                illum quis voluptas illo exercitationem qui voluptate obcaecati repudiandae, ad perferendis sequi amet 
-                doloremque. Labore, magni excepturi minima cum sit magnam maiores mollitia officiis ut aperiam, doloribus 
-                explicabo natus consectetur veritatis atque, dolorum sed esse omnis adipisci iusto exercitationem? Molestiae 
-                deserunt excepturi amet optio officia sit omnis maxime, eos quam natus voluptatum reprehenderit dolor quasi at 
-                repellendus quas. Odio nesciunt nostrum totam enim fugiat, et reiciendis at?
-                
-            </p>
-        
-       </div>
-    </div>
-
-</div>
-
-
-<div class="row p-4">
-    <div class="card m-auto" style="width: 80%;" data-aos="slide-left" >
-       <div class="card-body" >
-        <div id="video-container-violin" style="display: flex; justify-content: center; align-items: center;">
-                         
-        </div>
-        
-        
-        
-       </div>
-    </div>
-
-</div>
-
-
-<div class="row p-4">
-    <div class="card m-auto" style="width: 80%;" data-aos="slide-left" >
+    <div class="card m-auto" style="width: 90%; height:50%; " data-aos="slide-left",>
        <div class="card-body" >
         <div id="video_url_correlation" style="display: flex; justify-content: center; align-items: center;">
                          
@@ -57,7 +22,36 @@
 </div>
 
 <div class="row p-4">
-    <div class="card m-auto" style="width: 80%;" data-aos="slide-left" >
+    <div class="card m-auto" style="width: 90%;" data-aos="flip-left" >
+       <div class="card-body" >
+        <div id="chart1"></div>
+         
+        
+       </div>
+    </div>
+
+</div>
+
+
+<div class="row p-4">
+    <div class="card m-auto" style="width: 90%; height:30%;" data-aos="slide-left" >
+       <div class="card-body" >
+        <div id="video-container-violin" style="display: flex; justify-content: center; align-items: center;">
+                         
+        </div>
+        
+        
+        
+       </div>
+    </div>
+
+</div>
+
+
+
+
+<div class="row p-4">
+    <div class="card m-auto" style="width: 90%; height:40%;" data-aos="slide-left" >
        <div class="card-body" >
         <div id="video_url_inflation" style="display: flex; justify-content: center; align-items: center;">
                          
@@ -75,20 +69,7 @@
 
 
 
-<div class="card mb-4 m-auto" style="width: 100%;" data-aos="fade-left">
-    <div class="card-body">
-        <div id="dash-1"></div>
-        
-    </div>
-</div>
 
-
-<div class="card mb-4 m-auto" style="width: 100%;" data-aos="fade-left">
-    <div class="card-body">
-        <div id="dash-2"></div>
-        
-    </div>
-</div>
 
 
 
@@ -114,7 +95,7 @@
         videoElement.autoplay = true;
         var sourceElement = document.createElement("source");
         sourceElement.src = videoUrl;
-        videoElement.controls = true;
+        videoElement.controls = false;
         videoElement.muted = false; // Set muted to false
         sourceElement.type = "video/mp4";
         videoElement.appendChild(sourceElement);
@@ -122,6 +103,8 @@
 
         var videoContainer = document.getElementById("video-container-violin");
         videoContainer.appendChild(videoElement);
+
+        
     </script>
 
 
@@ -133,7 +116,7 @@
         videoElement.autoplay = true;
         var sourceElement = document.createElement("source");
         sourceElement.src = videoUrl;
-        videoElement.controls = true;
+        videoElement.controls = false;
         videoElement.muted = false; // Set muted to false
         sourceElement.type = "video/mp4";
         videoElement.appendChild(sourceElement);
@@ -145,14 +128,14 @@
 
 
     <script>
-        var videoUrl = "{{ video_url_infaltion}}";
+        var videoUrl = "{{ video_url_inflation}}";
         var videoElement = document.createElement("video");
         videoElement.width = 700;
         videoElement.height = 400;
         videoElement.autoplay = true;
         var sourceElement = document.createElement("source");
         sourceElement.src = videoUrl;
-        videoElement.controls = true;
+        videoElement.controls = false;
         videoElement.muted = false; // Set muted to false
         sourceElement.type = "video/mp4";
         videoElement.appendChild(sourceElement);
@@ -163,28 +146,7 @@
     </script>
 
 
-    <script src="{{ url_for('static', filename='dash-renderer.js') }}"></script>
-    <script>
-        // Initialize Dash App 1
-        var dash1 = new Dash({
-            urlBasePathname: '/dash1/',
-            renderer: new DashRenderer(),
-            setProps: function (props) {
-                document.getElementById('dash1').props = props;
-            }
-        });
-        dash1.start();
-
-        // Initialize Dash App 2
-        var dash2 = new Dash({
-            urlBasePathname: '/dash2/',
-            renderer: new DashRenderer(),
-            setProps: function (props) {
-                document.getElementById('dash2').props = props;
-            }
-        });
-        dash2.start();
-    </script>
+    
 
  
 {% endblock%}

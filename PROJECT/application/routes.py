@@ -17,6 +17,8 @@ from dash import dcc, html
 import dash
 from dash.dependencies import Input, Output
 import bar_chart_race as bcr
+import requests
+from bs4 import BeautifulSoup
 
 
 from application.dash import create_dash_application
@@ -35,6 +37,8 @@ subprocess.run(download_command, shell=True)
 # server_dash = dash_app.server
 
 # create_dash_application(flask_app)
+
+
 
 
 
@@ -63,13 +67,61 @@ def create_dash_application(flask_app):
     df_equity = df_equity.replace(0, np.nan)
     df_equity = df_equity.fillna(method='ffill')
     ## Creating dash app 
-    dash_app=dash.Dash(server=flask_app,name='Dash_1',url_base_pathname='/dash1/')
+    # external_css=url_for('static',filename='main.css')
+    dash_app=dash.Dash(server=flask_app,name='Dash_1',url_base_pathname='/dash1/',external_stylesheets=["static/main.css"])
+    
+    
+    # dash_app.css.append_css({
+    # "external_url": "main.css"
+    # })    
+    navbar = html.Nav(
+        className="navbar navbar-expand-lg navbar-dark bg-primary",
+        children=[
+            html.Div(
+                className="container-fluid",
+                children=[
+                    html.A(className="navbar-brand", href="#", children="COMP 4462"),
+                    html.Button(
+                        className="navbar-toggler",
+                        type="button",
+                        **{"data-bs-toggle": "collapse", "data-bs-target": "#navbarText", "aria-controls": "navbarText", "aria-expanded": "false", "aria-label": "Toggle navigation"},
+                        children=[
+                            html.Span(className="navbar-toggler-icon")
+                        ]
+                    ),
+                    html.Div(
+                        className="collapse navbar-collapse",
+                        id="navbarText",
+                        children=[
+                            html.Ul(
+                                className="navbar-nav ml-auto mb-2 mb-lg-0",
+                                children=[
+                                    html.Li(className="nav-item", children=[
+                                        html.A(className="nav-link", href="/", children="Home")
+                                    ]),
+                                    html.Li(className="nav-item", children=[
+                                        html.A(className="nav-link", href="/dash1/", children="Stock Indices")
+                                    ]),
+                                    html.Li(className="nav-item", children=[
+                                        html.A(className="nav-link", href="/dash2/", children="Bivariate Map")
+                                    ])
+                                ]
+                            )
+                        ]
+                    )
+                ]
+            )
+        ]
+    )
 
 # Initialize the Dash app
 # dash_app = dash.Dash(__name__)
 
     # Define the app layout
     dash_app.layout = html.Div([
+          
+           
+        html.H1("COVID-19 and Stock Indices"),
         dcc.Slider(
             id='time-slider',
             min=df_cases['date_num'].min(),
@@ -83,7 +135,8 @@ def create_dash_application(flask_app):
             id='country-checklist',
             options=[{'label': 'Overall', 'value': 'Overall'}] + [{'label': country, 'value': country} for country in df_cases['location'].unique()],
             value=['Japan', 'China', 'Germany', 'United States'], #df_cases['location'].unique().tolist(),
-            inline=True
+            inline=True,
+            labelStyle={'display': 'inline-block', 'margin-right': '10px'}
         ),
         dcc.RadioItems(
             id='yaxis-type',
@@ -301,11 +354,12 @@ def bivariate_map(flask_app):
     # print(merged_df.isna().sum())
     
     # Initialize the Dash app
-    app = dash.Dash(server=flask_app,name='Dash_2',url_base_pathname='/dash2/')
+    # external_css=url_for('static',filename='main.css')
+    app = dash.Dash(server=flask_app,name='Dash_2',url_base_pathname='/dash2/',external_stylesheets=["/static/main.css"])
         # Define the navbar HTML
-    app.css.append_css({
-    "external_url": "main.css"
-    })    
+    # app.css.append_css({
+    # "external_url": "static/main.css"
+    # })    
     navbar = html.Nav(
         className="navbar navbar-expand-lg navbar-dark bg-primary",
         children=[
@@ -348,7 +402,7 @@ def bivariate_map(flask_app):
 
     # Define the app layout
     app.layout = html.Div([
-        navbar,
+    
         html.H1("COVID-19 Cases and GDP Analysis"),
         
         html.Label('Select Year:'),
@@ -751,7 +805,8 @@ def index():
     # filter_column_colors=False)
     
     
-    video_url_inflation= '/static/inflation_final.mp4'
+    video_url_inflation='/static/inflation_final.mp4'
+
     
         
     
@@ -771,18 +826,57 @@ def index():
 # server=dash_app.server
 # dash_app.title = 'My Dash App' 
    
-@dash_app.server.route("/dash1/")
+@flask_app.route("/dash1/")
 def dash1():
-    return render_template('dash1.html',title="Dash1")
+    # Make a GET request to the Dash app URL
+    response = requests.get('http://localhost:5000/dash1/')
+
+    # Access the HTML content
+    html_content = response.text
+
+    # Modify the HTML content
+    soup = BeautifulSoup(html_content, 'html.parser')
+
+    # Find the body element
+    body = soup.find('body')
+
+    # Create the navbar element
+    navbar = soup.new_tag('nav')
+    navbar['class'] = 'navbar'
+    navbar_content = ''' <a class="navbar-brand" href="#">COMP 4462</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarText">
+            <ul class="navbar-nav ml-auto mb-2 mb-lg-0">
+                  <li class="nav-item">
+                    <a class="nav-link" href="/">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dash1/">Stock Indices</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/dash2/">Bivariate Map</a>
+                </li>
+            </ul>'''
+    navbar.append(BeautifulSoup(navbar_content, 'html.parser'))
+
+    # Append the navbar to the body
+    body.insert(0, navbar)
+
+    # Get the modified HTML content
+    modified_html_content = str(soup)
+
+    return modified_html_content
 
 
-@dash_bivariate.server.route("/dash2/")
+@flask_app.route("/dash2/")
 def dash2():
-    return render_template('dash2.html',title="Dash2")
+    return render_template('application/templates/dash2.html',title="Dash2")
 
-@flask_app.route('/static/main.css')
-def serve_css():
-    return flask_app.send_static_file('main.css')
+# @flask_app.route('/static/main.css')
+# def serve_css():
+#     return flask_app.send_static_file('main.css')
 
 
 
