@@ -1,9 +1,14 @@
 # COMP4462-final-project
 
-# Need to install bar_chart_race to run the code: pip install git+https://github.com/programiz/bar_chart_race.git@master
+# Open terminal(cmd)
+# change directory to .\COMP4462-final-project\PROJECT
+# run the following command
+# pip install flask pandas plotly seaborn bs4 requests dash Markup git+https://github.com/programiz/bar_chart_race.git@master
+# py run.py
 
-# pip install requests
+# Open a browser
+# replace the link with "localhost:5000"
 
-# pip install bs4
+# Now, you can start playing with the project.
 
 # Please reload once you start on localhost to see the autoplay (else the videos won't play)
