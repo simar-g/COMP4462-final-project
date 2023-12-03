@@ -1,6 +1,7 @@
 from application import flask_app 
 from slider_graph import dash_app
-from flask import render_template,url_for,Markup
+from flask import render_template,url_for
+from markupsafe import Markup
 import pandas as pd 
 import json
 import plotly
