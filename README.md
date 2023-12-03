@@ -1,6 +1,3 @@
-Here's a more visually appealing version of your README.md:
-
-```markdown
 # COMP4462 Final Project
 
 Welcome to the COMP4462 final project! This guide will help you get started.
