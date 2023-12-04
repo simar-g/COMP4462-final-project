@@ -29,5 +29,5 @@ Open your preferred web browser and navigate to `localhost:5000`.
 Now, you can start exploring the project!
 
 **Note:** Please click on 'Home' in the navigation bar on the top right once you start on localhost to enable autoplay (otherwise, the videos won't play).
-```
+
 
