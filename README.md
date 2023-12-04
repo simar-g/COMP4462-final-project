@@ -28,6 +28,6 @@ Open your preferred web browser and navigate to `localhost:5000`.
 
 Now, you can start exploring the project!
 
-**Note:** Please reload the page once you start on localhost to enable autoplay (otherwise, the videos won't play).
+**Note:** Please click on 'Home' in the navigation bar on the top right once you start on localhost to enable autoplay (otherwise, the videos won't play).
 ```
 This version uses code blocks to separate commands and includes some additional formatting for clarity. It also provides a brief introduction and separates the installation and usage instructions into their own sections for easier reading.
