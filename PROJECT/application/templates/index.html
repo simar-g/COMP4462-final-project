@@ -99,6 +99,8 @@
         videoElement.muted = false; // Set muted to false
         sourceElement.type = "video/mp4";
         videoElement.appendChild(sourceElement);
+         // Add the loop attribute to make the video loop
+         videoElement.loop = true;
 
 
         var videoContainer = document.getElementById("video-container-violin");
@@ -121,6 +123,8 @@
         sourceElement.type = "video/mp4";
         videoElement.appendChild(sourceElement);
 
+        videoElement.loop = true;
+
 
         var videoContainer = document.getElementById("video_url_correlation");
         videoContainer.appendChild(videoElement);
@@ -139,6 +143,8 @@
         videoElement.muted = false; // Set muted to false
         sourceElement.type = "video/mp4";
         videoElement.appendChild(sourceElement);
+
+        videoElement.loop = true;
 
 
         var videoContainer = document.getElementById("video_url_inflation");
