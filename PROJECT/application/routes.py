@@ -536,21 +536,31 @@ def index():
 
     
 
-    # Define the indices
+ # Define the indices
     us_indices = ['^GSPC', '^DJI', '^IXIC']  # S&P 500, Dow Jones, NASDAQ
     eu_indices = ['^FTSE', '^GDAXI', '^FCHI']  # FTSE 100, DAX, CAC 40
     asia_indices = ['^N225', '^HSI', '000001.SS']  # Nikkei 225, Hang Seng, Shanghai
+
 
     all_indices = us_indices + eu_indices + asia_indices
 
     # Fetch the data
     # data = yf.download(all_indices, start="2019-01-01", end="2023-11-14")
 
-    # Save to CSV
+    # # save to csv
     # data.to_csv('data.csv')
 
-    # Read data from CSV
+    # read data from csv
     data = pd.read_csv('application\data.csv', header=[0,1], index_col=0, parse_dates=True).loc['2019-08-01':'2023-11-14']
+
+    covid_data = pd.read_csv('application\Cleaned Covid Data.csv', parse_dates=['date'])
+    usa_covid_data = covid_data[covid_data['location'] == 'United States']
+    china_covid_data = covid_data[covid_data['location'] == 'China']
+    europe_covid_data = covid_data[covid_data['continent'] == 'Europe']
+
+    usa_total_cases = usa_covid_data.set_index('date')['total_cases']
+    china_total_cases = china_covid_data.set_index('date')['total_cases']
+    europe_total_cases = europe_covid_data.groupby('date').sum()['total_cases']
 
     # We are interested in adjusted closing prices
     data = data['Adj Close']
@@ -558,20 +568,74 @@ def index():
     # Compute Cumulative Returns
     returns = (1+data.pct_change()).cumprod()
 
-    # Take average of each region (US, EU, Asia)
+    usa_returns = (data['^GSPC'].pct_change())
+    china_returns = (data['000001.SS'].pct_change())
+    europe_returns = (data['^FTSE'].pct_change())
+
+    # merge usa_return with total cases , right join
+    usa = pd.merge(usa_returns, usa_total_cases, how='inner', left_index=True, right_index=True)
+    usa['total_cases'] = usa['total_cases'].pct_change()
+    usa = usa.dropna()
+    usa_rolling_correlation = usa[['total_cases','^GSPC']].rolling(30).corr().dropna().loc[pd.IndexSlice[:, '^GSPC'], 'total_cases']
+    usa_rolling_correlation.index = usa_rolling_correlation.index.droplevel(1)
+    usa_rolling_correlation.name = 'usa'
+
+    # do the same for china and europe
+    china = pd.merge(china_returns, china_total_cases, how='inner', left_index=True, right_index=True)
+    china['total_cases'] = china['total_cases'].pct_change()
+    china = china.dropna()
+    china_rolling_correlation = china[['total_cases','000001.SS']].rolling(30).corr().dropna().loc[pd.IndexSlice[:, '000001.SS'], 'total_cases']
+    china_rolling_correlation.index = china_rolling_correlation.index.droplevel(1)
+    china_rolling_correlation.name = 'china'
+
+    europe = pd.merge(europe_returns, europe_total_cases, how='inner', left_index=True, right_index=True)
+    europe['total_cases'] = europe['total_cases'].pct_change()
+    europe = europe.dropna()
+    europe_rolling_correlation = europe[['total_cases','^FTSE']].rolling(30).corr().dropna().loc[pd.IndexSlice[:, '^FTSE'], 'total_cases']
+    europe_rolling_correlation.index = europe_rolling_correlation.index.droplevel(1)
+    europe_rolling_correlation.name = 'europe'
+
+    # merge all rolling correlation, inner join
+    rolling_correlation = pd.merge(usa_rolling_correlation, china_rolling_correlation, how='inner', left_index=True, right_index=True)
+    rolling_correlation = pd.merge(rolling_correlation, europe_rolling_correlation, how='inner', left_index=True, right_index=True)
+
+    # heatmap
+    # sns.heatmap(rolling_correlation, annot=False, cmap='coolwarm')
+    # plt.show()
+
+
+    # plot the rolling correlation together
+    # rolling_correlation.plot()
+    # plt.show()
+
+
+
+    # take average of each region (us, eu, asia)
     returns['US'] = returns[us_indices].mean(axis=1)
     returns['EU'] = returns[eu_indices].mean(axis=1)
     returns['Asia'] = returns[asia_indices].mean(axis=1)
 
-    # Remove individual indices
+    # returns[['US','EU',"Asia"]].plot()
+    # plt.show()
+
+    # remove individual indices
     returns = returns.drop(us_indices, axis=1)
     returns = returns.drop(eu_indices, axis=1)
     returns = returns.drop(asia_indices, axis=1)
 
     # Define periods
-    periods = ['Pre-COVID Growth', 'COVID Crisis', 'Post-Crisis Recovery', 'Pandemic Aftermath']
-    dates = [pd.Timestamp('2019-08-01'), pd.Timestamp('2020-02-01'), pd.Timestamp('2020-04-30'), 
-            pd.Timestamp('2021-12-31'), pd.Timestamp('2023-11-14')]
+    periods = ['Pre-COVID', 'Outbreak in China', 'Global Spread', 'Lockdowns Begin', 
+            'Peak First Wave', 'Initial Reopenings', 'Second Wave', 'Vaccine Development', 
+            'Vaccine Approval', 'Vaccine Rollout Begins', 'Second Wave Peaks', 'Lockdowns Ease', 
+            'Vaccine Distribution Widens', 'New Variants Emerge', 'Third Wave', 'Global Vaccination Efforts', 
+            'Vaccine Hesitancy', 'Variants of Concern', 'Booster Vaccines', 'Endemic Transition']
+    dates = [pd.Timestamp('2019-08-01'), pd.Timestamp('2019-11-17'), pd.Timestamp('2020-01-31'), 
+            pd.Timestamp('2020-03-11'), pd.Timestamp('2020-05-01'), pd.Timestamp('2020-07-01'), 
+            pd.Timestamp('2020-09-01'), pd.Timestamp('2020-11-01'), pd.Timestamp('2020-12-09'), 
+            pd.Timestamp('2021-01-01'), pd.Timestamp('2021-03-01'), pd.Timestamp('2021-05-01'), 
+            pd.Timestamp('2021-07-01'), pd.Timestamp('2021-09-01'), pd.Timestamp('2021-11-01'), 
+            pd.Timestamp('2022-01-01'), pd.Timestamp('2022-03-01'), pd.Timestamp('2022-05-01'), 
+            pd.Timestamp('2022-07-01'), pd.Timestamp('2022-09-01'), pd.Timestamp('2023-12-31')]
 
     # Create a new column for the period
     returns['Period'] = pd.cut(returns.index, bins=dates, labels=periods, right=False)
@@ -579,6 +643,17 @@ def index():
     # Melt the data for the facet grid
     melted_returns = returns.reset_index().melt(id_vars=['Date', 'Period'], 
                                                 var_name='Index', value_name='Cumulative Return').dropna()
+
+
+
+    # Create the facet grid
+    # g = sns.FacetGrid(melted_returns, col="Period", col_wrap=2, height=4, aspect=2)
+    # g.map_dataframe(sns.boxplot, "Index", "Cumulative Return")
+    # g.add_legend(loc='upper left')
+
+    # plt.show()
+
+   
 
     # Create figure and axis
     fig, ax = plt.subplots()
@@ -590,25 +665,33 @@ def index():
     # Update function for each frame of the animation
     def update(frame):
         ax.clear()
-        current_date = (returns.index[0] + pd.DateOffset(days=frame)).date()
-        temp_df = melted_returns[(current_date <= melted_returns['Date'].dt.date) & (melted_returns['Date'].dt.date <= current_date + pd.DateOffset(days=frame))]
-        if not temp_df.empty:
+        current_date = (returns.index[0] + datetime.timedelta(days=frame)).date()
+        print(current_date)
+        temp_df = melted_returns[
+            (current_date <= melted_returns['Date'].dt.date) & 
+            (melted_returns['Date'].dt.date <= current_date + datetime.timedelta(days=frame))
+        ]
+        if not temp_df.empty: 
             sns.violinplot(x="Index", y="Cumulative Return", data=temp_df, ax=ax)
             ax.set_title(f'Stock Market at {current_date}')
-            period = temp_df['Period'].unique()[0]  # Get the period
-            ax.annotate(f'Period: {period}', xy=(0.5, 0.9), xycoords='axes fraction')  # Display the period
+            period = temp_df['Period'].unique()[0]  # get the period
+            ax.annotate(f'Period: {period}', xy=(0.5, 0.8), xycoords='axes fraction',color='red')  # display the period
+
+        # Set consistent axis limits
+        ax.set_ylim([0.7, 1.9])
 
     # Create the animation
-    ani = animation.FuncAnimation(fig, update, frames=range(0, (returns.index[-1] - returns.index[0]).days, 5), init_func=init)
+    ani = animation.FuncAnimation(fig, update, frames=range(0, (returns.index[-1] - returns.index[0]).days,5), init_func=init)
 
 
-    # Saving the video 
 
-    # ani.save('violin_plot.mp4', dpi=300)
-    # Display the animation
-    # HTML(ani.to_html5_video())
-    
-    video_url_violin = '/static/violin_plot.mp4'
+        # Saving the video 
+
+        # ani.save('violin_plot.mp4', dpi=300)
+        # Display the animation
+        # HTML(ani.to_html5_video())
+        
+    video_url_violin = '/static/violinplots_animation.mp4'
     
     
     ################################################# Graph 3 #################################################
