@@ -31,3 +31,8 @@ Now, you can start exploring the project!
 **Note:** Please click on 'Home' in the navigation bar on the top right once you start on localhost to enable autoplay (otherwise, the videos won't play).
 
 
+## Code
+
+The bar chart racer animation for inflation is written here: https://colab.research.google.com/drive/12I2islpA2MHnlPIM6AT77_VnY82NpZZn?usp=sharing
+
+
